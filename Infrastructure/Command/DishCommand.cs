@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.DishInterfaces;
+﻿using Application.DataTransfers.Request;
+using Application.Interfaces.DishInterfaces;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using System;
@@ -26,22 +27,20 @@ namespace Infrastructure.Command
             await _context.SaveChangesAsync();
         }
 
-        public Task DeleteDish(int id)
+        public Task DeleteDish(Dish dish)
         {
-            throw new NotImplementedException();
+            _context.Remove(dish);
+
+            return _context.SaveChangesAsync();
         }
 
-        public async  Task UpdateDish(Dish dishEnDB, Dish dishActualizado)
+        public async  Task UpdateDish(Dish dishEnDB, DishRequest dishActualizado)
         { 
             dishEnDB.Name = dishActualizado.Name;
             dishEnDB.Description = dishActualizado.Description;
             dishEnDB.Price = dishActualizado.Price;
-            if (dishEnDB.CategoryId != dishActualizado.CategoryId)
-            {
-                dishEnDB.CategoryId = dishActualizado.CategoryId;
-                dishEnDB.CategoryNav = dishActualizado.CategoryNav;
-            }
-            dishEnDB.ImageURL = dishActualizado.ImageURL;
+            dishEnDB.CategoryId = dishActualizado.Category;
+            dishEnDB.ImageURL = dishActualizado.Image;
             dishEnDB.UpdatedDate = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
